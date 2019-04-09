@@ -1,22 +1,30 @@
 pipeline{
 	agent any
 		stages {
-			stage('Preperation'){
-				steps{ sh 'docker pull ubuntu'
-				       sh 'docker pull nginx'
+			stage('vote'){
+				steps{	sh 'mkdir vote'
+					sh 'cd vote'
+				      	sh 'docker build -t 925528255726.dkr.ecr.ap-south-1.amazonaws.com/cloud_repo:v1_vote_1.0.0'
+				      	sh 'docker push 925528255726.dkr.ecr.ap-south-1.amazonaws.com/cloud_repo:v1_vote_1.0.0'
 					}
 				}
-			stage('build'){
-				steps{ sh 'docker run -itd --name mujammil ubuntu'
+			stage('result'){
+				steps{  sh 'mkdir result'
+					sh 'cd ../result'
+				      	sh 'docker build -t 925528255726.dkr.ecr.ap-south-1.amazonaws.com/cloud_repo:v1_result_1.0.0'
+				      	sh 'docker push 925528255726.dkr.ecr.ap-south-1.amazonaws.com/cloud_repo:v1_result_1.0.0'
+				      
 					}
 				}
-			stage('test'){
-				steps{ echo 'this is testing stage'
+			stage('worker'){
+				steps{ 	sh 'mkdir worker'
+				      	sh 'cd ../worker'
+				      	sh 'docker build -t 925528255726.dkr.ecr.ap-south-1.amazonaws.com/cloud_repo:v1_worker_1.0.0'
+				      	sh 'docker push 925528255726.dkr.ecr.ap-south-1.amazonaws.com/cloud_repo:v1_worker_1.0.0'
 					}
 				}
 			stage('deploy'){
-				steps{ input ('Do you want to proceed?')
-					echo 'this is deploy stage'
+				steps{ sh 'docker deploy -c docker-stack.yml voting-app'
 					}
 				}
 	}
